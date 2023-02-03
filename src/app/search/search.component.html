@@ -1,0 +1,162 @@
+<audio id="player">
+    <source>
+</audio>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap ps-5">
+    <a href="#" class="navbar-brand col-sm-3 col-md-2 mr-0">EForhum Lab</a>
+    <ul class="navbar-nav px-5">
+        <li class="nav-item text-nowrap"><a href="#" class="nav-link">{{username}}</a></li>
+    </ul>
+</nav>
+<div class="container shadow min-vh-100">
+    <div class="row p-3">
+
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+
+        </div>
+        <div class="col-sm-8 shadow p-3 mb-5 bg-body rounded">
+            <div class="mb-3">
+                <form class="form-floating" onsubmit="document.getElementById('btnSearch').click();return false">
+
+                    <input #searchText type="text" class="form-control" id="searchText" placeholder="search" value="">
+                    <label for="searchText">Ricerca su Spotify</label>
+                </form>
+            </div>
+            <div>
+                <button id="btnSearch" class="btn btn-secondary" (click)="search(searchText.value)">Search</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+
+        </div>
+    </div>
+
+    <div class="row">
+        <ul class="nav nav-tabs nav-fill">
+            <li class="nav-item">
+                <a [class]="trackClass" href="#content-track" (click)="changeTab('track')" data-bs-toggle="tab">Brani</a>
+            </li>
+            <li class="nav-item">
+                <a [class]="artistClass" href="#content-artist" (click)="changeTab('artist')" data-bs-toggle="tab">Artisti</a>
+            </li>
+            <li class="nav-item">
+                <a [class]="albumClass" href="#content-album" (click)="changeTab('album')" data-bs-toggle="tab">Album</a>
+            </li>
+            <li class="nav-item">
+                <a [class]="playlistClass" href="#content-playlist" (click)="changeTab('playlist')" data-bs-toggle="tab">Playlist</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="content-track" class="tab-pane active">
+                <div class="card m-3" style="height: 150px;" *ngFor="let track of resultTrack">
+                    <div class="d-flex flex-row g-0">
+                        <div class="">  
+                            <a target="_blank">
+                                <img class="rounded-start" style="height: 150px;">
+                            </a>
+                        </div>
+                        <div class="">
+                            <div class="card-body">
+                                <h5 class="card-title"></h5>
+                                <p class="card-text"></p>
+                                <button class="btn btn-outline-secondary" *ngIf = "track.previewUrl && !track.audioOn" (click) = "play(track)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+                                    </svg>
+                                </button>
+                                <button class="btn btn-outline-secondary" *ngIf = "track.previewUrl && track.audioOn" (click) = "play(track)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
+                                    </svg>
+                                </button>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="content-album" class="tab-pane">
+                <div class="card m-3 d-inline-flex" style="width: 18rem;" *ngFor="let album of resultAlbum">
+                    <h6 class="card-header text-truncate">
+                        {{album.name}}
+                    </h6>
+                    <a target="_blank">
+                        <img class="card-img-top">
+                    </a>
+                    <div class="accordion fixed-bottom position-absolute" [id]="'accordionTracks_' + album.id">
+                        <div class="accordion-item">
+                          <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" (click) = "fillTracks(album)"
+                                data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseTracks_' + album.id">
+                              Brani
+                            </button>
+                          </h2>
+                          <div [id]="'collapseTracks_' + album.id" class="accordion-collapse collapse" [attr.data-bs-parent]="'#accordionTracks_' + album.id">
+                            <div class="accordion-body overflow-scroll" style="height:200px">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item" *ngFor = "let track of album.trackList">
+                                        <p class="float-start" style="font-size: 12px">{{track.name}}</p>
+                                        <button class="btn btn-outline-secondary float-end" *ngIf = "track.previewUrl && !track.audioOn" (click) = "play(track)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="btn btn-outline-secondary float-end" *ngIf = "track.previewUrl && track.audioOn" (click) = "play(track)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
+                                            </svg>
+                                        </button>        
+                                    </li>
+                                </ul>            
+                            </div>
+                          </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            <div id="content-playlist" class="tab-pane">
+                <div class="card m-3 d-inline-flex" style="width: 18rem;" *ngFor="let playlist of resultPlaylist">
+                    <h6 class="card-header text-truncate">
+                        {{playlist.name}}
+                    </h6>
+                    <a target="_blank">
+                        <img class="card-img-top">
+                    </a>
+                    <div class="card-body">
+                        <h6 class="card-title"></h6>
+                        <p class="card-text"></p>
+                        <a target="_blank" class="btn btn-primary">Play</a>
+                    </div>
+                </div>
+            </div>
+            <div id="content-artist" class="tab-pane">
+                <div class="card m-3" style="max-width: 600px;" *ngFor="let artist of resultArtist">
+
+                    <div class="row g-0">
+                        <div class="col-md-4">  
+                            <a target="_blank">
+                                <img class="img-fluid rounded-start">
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{artist.name}}</h5>
+                                <p class="card-text">Followers: {{artist.followers | number : '1.0-0' : 'it'}}</p>
+                                <p class="card-text">Popolarità</p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{artist.popularity}}%</div>
+                                </div>
+                                <p class="card-text"></p>
+                                <a target="_blank" class="btn btn-primary">Play</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
