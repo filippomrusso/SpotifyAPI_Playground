@@ -34,30 +34,40 @@ export class SpotifyclientService {
 
     // TODO richiamo dell'API per il recupero delle informazioni utente
     // https://api.spotify.com/v1/me
-
-    let headers = this.buildBasicHeader();
-
+    let headers = new HttpHeaders().set("Accept", "application/json")
+    .set("Content-Type", "application/json")
+    .set("Authorization", "Bearer " + sessionStorage.getItem('spoty-token'))
+   
     return this.httpClient.get("https://api.spotify.com/v1/me", {'headers' : headers} );
   }
 
   search(searchText: string): Observable<any> {
 
+   
+    console.log("token : { " + sessionStorage.getItem('spoty-token') )
     // TODO implementare richiamo API per la ricerca
     // https://api.spotify.com/v1/search?query=the+script&type=album&offset=0&limit=20
     // const query : String = searchText.trim().replace(/\s/g, '+')
-    const headers = this.buildBasicHeader();
-
-                                     
-    let stringUrl : string = "https://api.spotify.com/v1/search?q=" ;
-    let temp : string = stringUrl + searchText + "&type=album%2Ctrack%2Cplaylist%2Cartist&market=US&limit=10";
+    const headers  = new HttpHeaders().set("Accept", "application/json")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", "Bearer " + sessionStorage.getItem('spoty-token'))
     
+    let stringUrl : string = "https://api.spotify.com/v1/search?q=" ;
+    //let temp : string = stringUrl + searchText + "&type=album%2Ctrack%2Cplaylist%2Cartist&market=US&limit=10";
+
+    let temp : string = stringUrl + searchText + "&type=track&market=US&limit=15";
+
     let url = new URL(temp)
 
-    console.log(url)
+    let stringedUrl = url.toString()
 
+    console.log(stringedUrl)
+
+    
 
     //return this.httpClient.get();
-    return new Observable();  
+    return this.httpClient.get("https://api/spotify/v1/search?q=sfera&type=track&market=ES&limit=10&offset=5", {'headers': headers});
+//this.httpClient.get(stringUrl, {'headers': headers});
   }
 
   retrieveTracks(album: Album): Observable<any> {

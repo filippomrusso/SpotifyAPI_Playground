@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
 
   login() {
 
+    // OAuth2 
     let spotifyBaseUrl: string = 'https://accounts.spotify.com/authorize';
     let clientId: string = '324274c5f45a42cfb0d8c7c46096b889';
     let redirectUrl: string = 'http://localhost:4200/redirect';

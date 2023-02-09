@@ -61,6 +61,7 @@ export class SearchComponent implements OnInit {
 // ---------- CALL SPOTIFY REST API ----------    
     this.service.search(searchText).subscribe((data: any) => {
 
+      console.log(data)
       let tracks = new Array();
       console.log(tracks);
       // MAPPING PROPERTY TRACK
