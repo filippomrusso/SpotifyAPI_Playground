@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Album } from '../dto/album';
 import { Artist } from '../dto/artist';
@@ -59,25 +59,12 @@ export class SearchComponent implements OnInit {
     this.resultPlaylist.splice(0, this.resultPlaylist.length);
 
 // ---------- CALL SPOTIFY REST API ----------    
-    this.service.search(searchText).subscribe((data: any) => {
-
+    this.service.search(searchText).subscribe((data: any) => { 
       console.log(data)
-      let tracks = new Array();
-      console.log(tracks);
-      // MAPPING PROPERTY TRACK
-
-      let albums = new Array();
-      console.log(albums);
-      // MAPPING PROPERTY ALBUM
-
-      let artists = new Array();
-      console.log(artists);
-      // MAPPING PROPERTY ARTISTS
-
-      let playlists = new Array();
-      console.log(playlists);
-      // MAPPING PROPERTY PLAYLIST
-
+      this.resultTrack =  data.tracks.items 
+      this.resultAlbum =  data.albums.items
+      this.resultArtist = data.artists.items
+      this.resultPlaylist = data.playlists.items
     });
   }
 

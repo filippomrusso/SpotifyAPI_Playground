@@ -16,8 +16,7 @@ export class RedirectComponent implements OnInit {
     this.service.registerToken(location.hash.substring(1))
     .subscribe((response) => { 
       const user: Object = (response as Object)
-      console.log(user)
-     // console.log(JSON.stringify(response)) 
+      console.log("Logged user: " + user)
     });
     
     this.router.navigate(['search']);

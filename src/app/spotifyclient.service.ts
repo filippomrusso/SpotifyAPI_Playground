@@ -12,11 +12,11 @@ export class SpotifyclientService {
   username: string = '';
 
   constructor(private httpClient: HttpClient) { 
-
     this.token = <string>sessionStorage.getItem('spoty-token');
     this.username = <string>sessionStorage.getItem('username');
   }
 
+  // Common headers merged in a single function to avoid redundancy
   buildBasicHeader(): HttpHeaders {
     let basicHeaders = new HttpHeaders().set("Accept", "application/json")
                                .set("Content-Type", "application/json")
@@ -38,36 +38,19 @@ export class SpotifyclientService {
     .set("Content-Type", "application/json")
     .set("Authorization", "Bearer " + sessionStorage.getItem('spoty-token'))
    
-    return this.httpClient.get("https://api.spotify.com/v1/me", {'headers' : headers} );
+    return this.httpClient.get("https://api.spotify.com/v1/me", {'headers': this.buildBasicHeader()} );
   }
 
   search(searchText: string): Observable<any> {
+    // Check if jwt is still valid 
+    //console.log("token : { " + sessionStorage.getItem('spoty-token') )
 
-   
-    console.log("token : { " + sessionStorage.getItem('spoty-token') )
-    // TODO implementare richiamo API per la ricerca
-    // https://api.spotify.com/v1/search?query=the+script&type=album&offset=0&limit=20
-    // const query : String = searchText.trim().replace(/\s/g, '+')
-    const headers  = new HttpHeaders().set("Accept", "application/json")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", "Bearer " + sessionStorage.getItem('spoty-token'))
-    
-    let stringUrl : string = "https://api.spotify.com/v1/search?q=" ;
-    //let temp : string = stringUrl + searchText + "&type=album%2Ctrack%2Cplaylist%2Cartist&market=US&limit=10";
+    // Fill blank spaces of searchText with a '+'
+    let query = searchText.trim().replace(/\s/g, '+')
 
-    let temp : string = stringUrl + searchText + "&type=track&market=US&limit=15";
-
-    let url = new URL(temp)
-
-    let stringedUrl = url.toString()
-
-    console.log(stringedUrl)
-
-    
-
-    //return this.httpClient.get();
-    return this.httpClient.get("https://api/spotify/v1/search?q=sfera&type=track&market=ES&limit=10&offset=5", {'headers': headers});
-//this.httpClient.get(stringUrl, {'headers': headers});
+    let stringUrl : string = "https://api.spotify.com/v1/search?q=" + query + "&type=track%2Cartist%2Calbum%2Cplaylist&market=US&limit=10" ;
+    console.log(stringUrl)
+    return this.httpClient.get(stringUrl, {'headers': this.buildBasicHeader()});
   }
 
   retrieveTracks(album: Album): Observable<any> {
